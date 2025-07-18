@@ -1,53 +1,47 @@
 const express = require('express');
+
 const app = express();
-
-app.use(express.json());
-
 const PORT = 3000;
 
-app.get('/users', (req, res) => {
-  res.json({ message: 'This is the GET user path' });
+app.use(express.json()); // Middleware to parse JSON bodies
+
+
+
+app.get('/employees', (req, res) => {
+  res.json({ message: 'This is the GET route for employees' });
 });
 
-app.post('/users', (req, res) => {
-  res.json({ message: 'This is the POST path and a user was added' });
+app.post('/employees', (req, res) => {
+  res.json({ message: 'This is the POST route for employees. A new employee was added.' });
 });
 
-app.put('/users', (req, res) => {
-  res.json({ message: 'This is the PUT path and user data was replaced' });
+app.patch('/employees', (req, res) => {
+  res.json({ message: 'This is the PATCH route for employees. An employee was updated.' });
 });
 
-app.patch('/users', (req, res) => {
-  res.json({ message: 'This is the PATCH path and user data was updated' });
+app.delete('/employees', (req, res) => {
+  res.json({ message: 'This is the DELETE route for employees. An employee was removed.' });
 });
 
-app.delete('/users', (req, res) => {
-  res.json({ message: 'This is the DELETE path and a user was removed' });
+// MANAGERS ROUTES 
+
+app.get('/managers', (req, res) => {
+  res.json({ message: 'This is the GET route for managers' });
 });
 
-// --- PRODUCTS ROUTES ---
-
-app.get('/products', (req, res) => {
-  res.json({ message: 'This is the GET product path' });
+app.post('/managers', (req, res) => {
+  res.json({ message: 'This is the POST route for managers. A new manager was added.' });
 });
 
-app.post('/products', (req, res) => {
-  res.json({ message: 'This is the POST path and a product was added' });
+app.patch('/managers', (req, res) => {
+  res.json({ message: 'This is the PATCH route for managers. A manager was updated.' });
 });
 
-app.put('/products', (req, res) => {
-  res.json({ message: 'This is the PUT path and product data was replaced' });
+app.delete('/managers', (req, res) => {
+  res.json({ message: 'This is the DELETE route for managers. A manager was removed.' });
 });
 
-app.patch('/products', (req, res) => {
-  res.json({ message: 'This is the PATCH path and product data was updated' });
-});
-
-app.delete('/products', (req, res) => {
-  res.json({ message: 'This is the DELETE path and a product was removed' });
-});
-
-// --- SERVER START ---
+// Run 
 app.listen(PORT, () => {
-  console.log(`SHOPLEFT API running at http://localhost:${PORT}`);
+  console.log(`PICK 'n STEAL API running at http://localhost:${PORT}`);
 });
