@@ -4,7 +4,7 @@ const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',          
   password: 'OM1710004', // Use your MySQL password    
-  database: 'shopleft_database'
+  database: 'pick_n_steal'
 });
 
 conn.connect(err => {

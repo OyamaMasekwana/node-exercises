@@ -1,47 +1,81 @@
+// const conn = require('.mysql2/promise');
 const express = require('express');
-
 const app = express();
-const PORT = 3000;
+const conn = require('./db');
 
-app.use(express.json()); // Middleware to parse JSON bodies
-
+app.use(express.json()); 
 
 
 app.get('/employees', (req, res) => {
-  res.json({ message: 'This is the GET route for employees' });
+  const sql = 'SELECT * FROM employees';
+  conn.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
 });
+
+
+app.get('/employees/:id', (req, res) => {
+  const sql = 'SELECT * FROM employees WHERE employee_id = ?';
+  conn.query(sql, [req.params.id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: 'Employee not found' });
+    res.json(results[0]);
+  });
+});
+
 
 app.post('/employees', (req, res) => {
-  res.json({ message: 'This is the POST route for employees. A new employee was added.' });
+  const { first_name, last_name, email, phone_number, department, salary } = req.body;
+  const sql = `
+    INSERT INTO employees (first_name, last_name, email, phone_number, department, salary)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+  conn.query(sql, [first_name, last_name, email, phone_number, department, salary], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    
+    conn.query('SELECT * FROM employees', (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results);
+    });
+  });
 });
 
-app.patch('/employees', (req, res) => {
-  res.json({ message: 'This is the PATCH route for employees. An employee was updated.' });
+
+app.delete('/employees/:id', (req, res) => {
+  const sql = 'DELETE FROM employees WHERE employee_id = ?';
+  conn.query(sql, [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    
+    conn.query('SELECT * FROM employees', (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results);
+    });
+  });
 });
 
-app.delete('/employees', (req, res) => {
-  res.json({ message: 'This is the DELETE route for employees. An employee was removed.' });
+
+app.put('/employees/:id', (req, res) => {
+  const { first_name, last_name, email, phone_number, department, salary } = req.body;
+  const sql = `
+    UPDATE employees 
+    SET first_name = ?, last_name = ?, email = ?, phone_number = ?, department = ?, salary = ?
+    WHERE employee_id = ?
+  `;
+  conn.query(sql, [first_name, last_name, email, phone_number, department, salary, req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    
+    conn.query('SELECT * FROM employees WHERE employee_id = ?', [req.params.id], (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results[0]);
+    });
+  });
 });
 
-// MANAGERS ROUTES 
-
-app.get('/managers', (req, res) => {
-  res.json({ message: 'This is the GET route for managers' });
-});
-
-app.post('/managers', (req, res) => {
-  res.json({ message: 'This is the POST route for managers. A new manager was added.' });
-});
-
-app.patch('/managers', (req, res) => {
-  res.json({ message: 'This is the PATCH route for managers. A manager was updated.' });
-});
-
-app.delete('/managers', (req, res) => {
-  res.json({ message: 'This is the DELETE route for managers. A manager was removed.' });
-});
-
-// Run 
+const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`PICK 'n STEAL API running at http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
